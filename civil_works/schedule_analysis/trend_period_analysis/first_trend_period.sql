@@ -13,7 +13,7 @@
 -- Since the calculations are complex, sometimes it will be necessary to mention other comments to avoid repetitions and, 
 -- mainly, to facilitate understanding.
 
-ALTER TRIGGER trg_first_trend_period
+CREATE TRIGGER trg_first_trend_period
 ON tb_activity_real_progress
 AFTER INSERT, UPDATE, DELETE
 AS
@@ -28,8 +28,8 @@ BEGIN
 																			tb_schedule
 																			ON tb_qualitative_activity.id_schedule = tb_schedule.id_schedule)
 	-- 02C
-	-- In case of deletions, the snippet below declares the project's PK as the variable "@idDeleted";
-	DECLARE @idDeleted INTEGER =  (SELECT tb_schedule.id_civil_work FROM inserted JOIN 
+	-- In case of deletions, the snippet below declares the project's PK as the variable "@id_deleted";
+	DECLARE @id_deleted INTEGER =  (SELECT tb_schedule.id_civil_work FROM inserted JOIN 
 																				tb_qualitative_activity
 																				ON tb_qualitative_activity.id_qualitative_activity = inserted.id_qualitative_activity
 																		   JOIN
@@ -465,5 +465,9 @@ BEGIN
 		ON sq_first_period.id_civil_work = cte_accumulated.id_civil_work
 		AND cte_accumulated.period = sq_first_period.period
 	WHERE
-		@id = cte_accumulated.id_civil_work OR @idDeleted = cte_accumulated.id_civil_work
+		@id = cte_accumulated.id_civil_work OR @id_deleted = cte_accumulated.id_civil_work
 END;
+GO
+
+ALTER TABLE [dbo].[tb_activity_real_progress] ENABLE TRIGGER [trg_first_trend_period];
+GO

@@ -13,7 +13,7 @@
 -- Since the calculations are complex, sometimes it will be necessary to mention other comments to avoid repetitions and, 
 -- mainly, to facilitate understanding.
 
-ALTER TRIGGER trg_second_trend_period
+CREATE TRIGGER trg_second_trend_period
 ON tb_activity_real_progress
 AFTER INSERT, UPDATE, DELETE
 AS
@@ -28,8 +28,8 @@ BEGIN
 																			tb_schedule
 																			ON tb_qualitative_activity.id_schedule = tb_schedule.id_schedule)
 	-- 02C
-	-- In case of deletions, the snippet below declares the project's PK as the variable "@idDeleted";
-	DECLARE @idDeleted INTEGER =  (SELECT tb_schedule.id_civil_work FROM inserted JOIN 
+	-- In case of deletions, the snippet below declares the project's PK as the variable "@id_deleted";
+	DECLARE @id_deleted INTEGER =  (SELECT tb_schedule.id_civil_work FROM inserted JOIN 
 																				tb_qualitative_activity
 																				ON tb_qualitative_activity.id_qualitative_activity = inserted.id_qualitative_activity
 																		   JOIN
@@ -180,7 +180,8 @@ BEGIN
 		-- 10C
 		-- Once the periods are already calculated and attached with the accomplished and foreseen physical advances, in the 
 		-- snippet below, everything is structured with the necessary information to assemble the second period of the 
-		-- trend (described from comments 11C to 18C);
+		-- trend. All the calculations are pretty mutch the same as the first trend code
+		-- (described from comments 11C to 18C from "first_trend_period.sql");
 		(SELECT
 			sq_initial_deviation.id_civil_work,
 			sq_initial_deviation.period,
@@ -420,5 +421,9 @@ BEGIN
 		ON sq_second_period.id_civil_work = tde_accumulated.id_civil_work
 		AND tde_accumulated.period = sq_second_period.period
 	WHERE
-		@id = tde_accumulated.id_civil_work OR @idDeleted = tde_accumulated.id_civil_work
+		@id = tde_accumulated.id_civil_work OR @id_deleted = tde_accumulated.id_civil_work
 END;
+GO
+
+ALTER TABLE [dbo].[tb_activity_real_progress] ENABLE TRIGGER [trg_second_trend_period];
+GO
