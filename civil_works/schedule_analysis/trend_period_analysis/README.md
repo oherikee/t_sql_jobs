@@ -7,6 +7,8 @@
   - Current estimate;
   - Seasonal estimates;
   - Trend period.
-The results should each be saved in a table (one for each period). Below, see the structure of the tables in the database.</p>
+The results should each be saved in a table (one for each period).
+
+Below, see the structure of the tables in the database.</p>
 
 ![diagram](/assets/images/trend_period_diagram.png)
